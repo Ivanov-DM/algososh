@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 78px;
+    margin: auto;
+}
+
+.input {
+    display: flex;
+    width: 829px;
+    margin: auto;
+    column-gap: 12px;
+}
+
+.btnContainer {
+    display: flex;
+}
+
+.addBtn {
+    margin-right: 12px;
+}
+
+.deleteBtn {
+    margin-right: 80px;
+}
+
+.animation {
+    display: flex;
+    margin: auto;
+    column-gap: 16px;
+}
+

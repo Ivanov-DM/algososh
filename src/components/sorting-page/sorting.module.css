@@ -1,0 +1,42 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 48px;
+    margin: auto;
+}
+
+.input {
+    display: flex;
+    width: 924px;
+    margin: auto;
+    justify-content: space-between;
+}
+
+.animation {
+    display: flex;
+    column-gap: 10px;
+    justify-content: center;
+    align-items: end;
+    height: 342px;
+
+}
+
+.radioBtn {
+    display: flex;
+    column-gap: 40px;
+    align-items: center;
+}
+
+.btnContainer {
+    display: flex;
+    column-gap: 80px;
+}
+
+.sortingBtns {
+    display: flex;
+    column-gap: 12px;
+}
+
+.sortingBtn {
+    width: 205px;
+}
