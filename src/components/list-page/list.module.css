@@ -1,29 +1,29 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    row-gap: 120px;
-    margin: auto;
+  display: flex;
+  flex-direction: column;
+  row-gap: 120px;
+  margin: auto;
 }
 
 .form {
-    display: flex;
-    width: 952px;
-    margin: auto;
-    column-gap: 12px;
+  display: flex;
+  width: 952px;
+  margin: auto;
+  column-gap: 12px;
 }
 
 .formContainer {
-    display: flex;
-    flex-direction: column;
-    row-gap: 12px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
 }
 
 .animation {
-    display: flex;
-    margin: auto;
-    column-gap: 16px;
+  display: flex;
+  margin: auto;
+  column-gap: 16px;
 }
 
 .inputEl {
-    width: 204px;
+  width: 204px;
 }

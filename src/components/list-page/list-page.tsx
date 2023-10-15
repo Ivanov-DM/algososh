@@ -1,20 +1,20 @@
-import React, {useEffect, useRef, useState} from "react";
-import {SolutionLayout} from "../ui/solution-layout/solution-layout";
+import React, { useEffect, useRef, useState } from "react";
+import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./list.module.css";
-import {Input} from "../ui/input/input";
-import {Button} from "../ui/button/button";
-import {Circle} from "../ui/circle/circle";
-import {LinkedList} from "./LInkedList";
-import {randomArr} from "../../utils/utils";
-import {ElementStates} from "../../types/element-states";
-import {delay} from "../string/string";
-import {getFirstElement, getListElements} from "./utils";
+import { Input } from "../ui/input/input";
+import { Button } from "../ui/button/button";
+import { Circle } from "../ui/circle/circle";
+import { LinkedList } from "./LInkedList";
+import { randomArr } from "../../utils/utils";
+import { ElementStates } from "../../types/element-states";
+import { delay } from "../string/string";
+import { getFirstElement, getListElements } from "./utils";
 
 type TInsertedListElement = {
   letter: string;
   state: ElementStates;
   isSmall: boolean;
-}
+};
 
 export type TListElement = {
   letter: string;
@@ -22,20 +22,20 @@ export type TListElement = {
   head: string | TInsertedListElement;
   tail: string | TInsertedListElement;
   state: ElementStates;
-}
+};
 
 type TClickedButton =
-    'addByHeadBtn' |
-    'addByTailBtn' |
-    'deleteByHeadBtn' |
-    'deleteByTailBtn' |
-    'addByIndexBtn' |
-    'deleteByIndexBtn';
+  | "addByHeadBtn"
+  | "addByTailBtn"
+  | "deleteByHeadBtn"
+  | "deleteByTailBtn"
+  | "addByIndexBtn"
+  | "deleteByIndexBtn";
 
 export const ListPage: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>();
   const [inputIndex, setInputIndex] = useState<number>();
-  const [clickedBtn, setClickedBtn] = useState<TClickedButton | string>('');
+  const [clickedBtn, setClickedBtn] = useState<TClickedButton | string>("");
   const [listElements, setListElements] = useState<Array<TListElement>>([]);
   const listRef = useRef(new LinkedList(randomArr(0, 50, 4, 6)));
 
@@ -46,20 +46,20 @@ export const ListPage: React.FC = () => {
   const updateList = async (modifiedStack: Array<TListElement>) => {
     await delay(1000);
     setListElements([...modifiedStack]);
-  }
+  };
 
   const onChangeValueHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
-  }
+  };
 
   const onChangeIndexHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputIndex(+event.target.value);
-  }
+  };
 
   const addByHeadHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!inputValue) {
-      return
+      return;
     }
     setClickedBtn((event.currentTarget as HTMLButtonElement).value);
     let modifiedElements = listElements.slice();
@@ -67,12 +67,12 @@ export const ListPage: React.FC = () => {
       modifiedElements.push(getFirstElement(+inputValue));
       listRef.current.prepend(+inputValue);
       await updateList(modifiedElements);
-      setClickedBtn('');
+      setClickedBtn("");
     } else {
       modifiedElements[0].head = {
         letter: inputValue,
         state: ElementStates.Changing,
-        isSmall: true
+        isSmall: true,
       };
       await updateList(modifiedElements);
       listRef.current.prepend(+inputValue!);
@@ -80,16 +80,16 @@ export const ListPage: React.FC = () => {
       modifiedElements[0].state = ElementStates.Modified;
       await updateList(modifiedElements);
       modifiedElements[0].state = ElementStates.Default;
-      await  updateList(modifiedElements);
-      setInputValue('');
-      setClickedBtn('');
+      await updateList(modifiedElements);
+      setInputValue("");
+      setClickedBtn("");
     }
-  }
+  };
 
   const addByTailHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!inputValue) {
-      return
+      return;
     }
     setClickedBtn((event.currentTarget as HTMLButtonElement).value);
     let modifiedElements = listElements.slice();
@@ -97,24 +97,26 @@ export const ListPage: React.FC = () => {
       modifiedElements.push(getFirstElement(+inputValue));
       listRef.current.prepend(+inputValue);
       await updateList(modifiedElements);
-      setClickedBtn('');
+      setClickedBtn("");
     } else {
       modifiedElements[modifiedElements.length - 1].tail = {
         letter: inputValue,
         state: ElementStates.Changing,
-        isSmall: true
+        isSmall: true,
       };
       await updateList(modifiedElements);
       listRef.current.append(+inputValue!);
       modifiedElements = getListElements(listRef.current.toArray());
-      modifiedElements[modifiedElements.length - 1].state = ElementStates.Modified;
+      modifiedElements[modifiedElements.length - 1].state =
+        ElementStates.Modified;
       await updateList(modifiedElements);
-      modifiedElements[modifiedElements.length - 1].state = ElementStates.Default;
+      modifiedElements[modifiedElements.length - 1].state =
+        ElementStates.Default;
       await updateList(modifiedElements);
-      setInputValue('');
-      setClickedBtn('');
+      setInputValue("");
+      setClickedBtn("");
     }
-  }
+  };
 
   const deleteByHeadHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -125,12 +127,12 @@ export const ListPage: React.FC = () => {
       state: ElementStates.Changing,
       isSmall: true,
     };
-    modifiedElements[0].letter = '';
+    modifiedElements[0].letter = "";
     await updateList(modifiedElements);
     listRef.current.deleteHead();
     await updateList(getListElements(listRef.current.toArray()));
-    setClickedBtn('');
-  }
+    setClickedBtn("");
+  };
 
   const deleteByTailHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -141,12 +143,12 @@ export const ListPage: React.FC = () => {
       state: ElementStates.Changing,
       isSmall: true,
     };
-    modifiedElements[modifiedElements.length - 1].letter = '';
+    modifiedElements[modifiedElements.length - 1].letter = "";
     await updateList(modifiedElements);
     listRef.current.deleteTail();
     await updateList(getListElements(listRef.current.toArray()));
-    setClickedBtn('');
-  }
+    setClickedBtn("");
+  };
 
   const addByIndexHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -159,23 +161,23 @@ export const ListPage: React.FC = () => {
     modifiedElements[0].head = {
       letter: inputValue,
       state: ElementStates.Changing,
-      isSmall: true
-    }
+      isSmall: true,
+    };
     await updateList(modifiedElements);
     // step #2: ищем нужный элемент по индексу по пути подсвечивая элементы, которые не подходят
     let findIndex = 0;
     while (findIndex !== inputIndex) {
       if (findIndex === 0) {
-        modifiedElements[findIndex].head = 'head';
+        modifiedElements[findIndex].head = "head";
       } else {
-        modifiedElements[findIndex].head = '';
+        modifiedElements[findIndex].head = "";
       }
       modifiedElements[findIndex].state = ElementStates.Changing;
       modifiedElements[findIndex + 1].head = {
         letter: inputValue,
         state: ElementStates.Changing,
-        isSmall: true
-      }
+        isSmall: true,
+      };
       findIndex++;
       await updateList(modifiedElements);
     }
@@ -186,10 +188,10 @@ export const ListPage: React.FC = () => {
     await updateList(modifiedElements);
     //step #4: убираем подсветку вставленного по индексу элемента
     modifiedElements[inputIndex].state = ElementStates.Default;
-    await  updateList(modifiedElements);
-    setClickedBtn('');
+    await updateList(modifiedElements);
+    setClickedBtn("");
     setInputIndex(0);
-  }
+  };
 
   const deleteByIndexHandler = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -209,16 +211,16 @@ export const ListPage: React.FC = () => {
     modifiedElements[findIndex].tail = {
       letter: modifiedElements[findIndex].letter,
       state: ElementStates.Changing,
-      isSmall: true
-    }
-    modifiedElements[findIndex].letter = '';
+      isSmall: true,
+    };
+    modifiedElements[findIndex].letter = "";
     await updateList(modifiedElements);
     //step #3: удаляем елемент по индексу и отрисовываем новое состояние массива элементов
     listRef.current.deleteByIndex(inputIndex);
     await updateList(getListElements(listRef.current.toArray()));
-    setClickedBtn('');
+    setClickedBtn("");
     setInputIndex(0);
-  }
+  };
 
   return (
     <SolutionLayout title="Связный список">
@@ -226,105 +228,113 @@ export const ListPage: React.FC = () => {
         <div className={styles.formContainer}>
           <form className={styles.form}>
             <Input
-                maxLength={4}
-                isLimitText={true}
-                type={'text'}
-                extraClass={styles.inputEl}
-                onChange={onChangeValueHandler}
-                value={inputValue}
+              maxLength={4}
+              isLimitText={true}
+              type={"text"}
+              extraClass={styles.inputEl}
+              onChange={onChangeValueHandler}
+              value={inputValue}
             />
             <Button
-                text="Добавить в head"
-                type="submit"
-                onClick={addByHeadHandler}
-                linkedList={"small"}
-                disabled={!inputValue || clickedBtn !== ''}
-                isLoader={clickedBtn === "addByHeadBtn"}
-                value="addByHeadBtn"
+              text="Добавить в head"
+              type="submit"
+              onClick={addByHeadHandler}
+              linkedList={"small"}
+              disabled={!inputValue || clickedBtn !== ""}
+              isLoader={clickedBtn === "addByHeadBtn"}
+              value="addByHeadBtn"
             />
             <Button
-                text="Добавить в tail"
-                type="submit"
-                linkedList={"small"}
-                onClick={addByTailHandler}
-                disabled={!inputValue || clickedBtn !== ''}
-                isLoader={clickedBtn === "addByTailBtn"}
-                value="addByTailBtn"
+              text="Добавить в tail"
+              type="submit"
+              linkedList={"small"}
+              onClick={addByTailHandler}
+              disabled={!inputValue || clickedBtn !== ""}
+              isLoader={clickedBtn === "addByTailBtn"}
+              value="addByTailBtn"
             />
             <Button
-                text="Удалить из head"
-                linkedList={"small"}
-                onClick={deleteByHeadHandler}
-                disabled={listRef.current.getSize() === 0 || clickedBtn !== ''}
-                isLoader={clickedBtn === "deleteByHeadBtn"}
-                value="deleteByHeadBtn"
+              text="Удалить из head"
+              linkedList={"small"}
+              onClick={deleteByHeadHandler}
+              disabled={listRef.current.getSize() === 0 || clickedBtn !== ""}
+              isLoader={clickedBtn === "deleteByHeadBtn"}
+              value="deleteByHeadBtn"
             />
             <Button
-                text="Удалить из tail"
-                linkedList={"small"}
-                onClick={deleteByTailHandler}
-                disabled={listRef.current.getSize() === 0 || clickedBtn !== ''}
-                isLoader={clickedBtn === "deleteByTailBtn"}
-                value="deleteByTailBtn"
+              text="Удалить из tail"
+              linkedList={"small"}
+              onClick={deleteByTailHandler}
+              disabled={listRef.current.getSize() === 0 || clickedBtn !== ""}
+              isLoader={clickedBtn === "deleteByTailBtn"}
+              value="deleteByTailBtn"
             />
           </form>
           <form className={styles.form}>
             <Input
-                placeholder={'Введите индекс'}
-                type={'number'}
-                extraClass={styles.inputEl}
-                onChange={onChangeIndexHandler}
-                value={inputIndex}
+              placeholder={"Введите индекс"}
+              type={"number"}
+              extraClass={styles.inputEl}
+              onChange={onChangeIndexHandler}
+              value={inputIndex}
             />
             <Button
-                text="Добавить по индексу"
-                type="submit"
-                linkedList={"big"}
-                onClick={addByIndexHandler}
-                disabled={!inputValue || !inputIndex || clickedBtn !== ''}
-                isLoader={clickedBtn === "addByIndexBtn"}
-                value="addByIndexBtn"
+              text="Добавить по индексу"
+              type="submit"
+              linkedList={"big"}
+              onClick={addByIndexHandler}
+              disabled={!inputValue || !inputIndex || clickedBtn !== ""}
+              isLoader={clickedBtn === "addByIndexBtn"}
+              value="addByIndexBtn"
             />
             <Button
-                text="Удалить по индексу"
-                type="submit"
-                linkedList={"big"}
-                onClick={deleteByIndexHandler}
-                disabled={!inputValue || !inputIndex || clickedBtn !== ''}
-                isLoader={clickedBtn === "deleteByIndexBtn"}
-                value="deleteByIndexBtn"
+              text="Удалить по индексу"
+              type="submit"
+              linkedList={"big"}
+              onClick={deleteByIndexHandler}
+              disabled={!inputValue || !inputIndex || clickedBtn !== ""}
+              isLoader={clickedBtn === "deleteByIndexBtn"}
+              value="deleteByIndexBtn"
             />
           </form>
         </div>
-        <div className={styles.animation} >
+        <div className={styles.animation}>
           {listElements.length !== 0
-              ? listElements.map((el, index, arr) => {
+            ? listElements.map((el, index, arr) => {
                 return (
-                    <Circle
-                        letter={el.letter}
-                        index={el.index}
-                        head={typeof el.head === 'string'
-                            ? el.head
-                            : (<Circle
-                                letter={el.head.letter}
-                                state={el.head.state}
-                                isSmall={el.head.isSmall}
-                                key={index + arr.length}
-                            />)}
-                        tail={typeof el.tail === 'string'
-                            ? el.tail
-                            : (<Circle
-                                letter={el.tail.letter}
-                                state={el.tail.state}
-                                isSmall={el.tail.isSmall}
-                                key={index + arr.length}
-                            />)}
-                        state={el.state}
-                        key={index}
-                    />
-                )
+                  <Circle
+                    letter={el.letter}
+                    index={el.index}
+                    head={
+                      typeof el.head === "string" ? (
+                        el.head
+                      ) : (
+                        <Circle
+                          letter={el.head.letter}
+                          state={el.head.state}
+                          isSmall={el.head.isSmall}
+                          key={index + arr.length}
+                        />
+                      )
+                    }
+                    tail={
+                      typeof el.tail === "string" ? (
+                        el.tail
+                      ) : (
+                        <Circle
+                          letter={el.tail.letter}
+                          state={el.tail.state}
+                          isSmall={el.tail.isSmall}
+                          key={index + arr.length}
+                        />
+                      )
+                    }
+                    state={el.state}
+                    key={index}
+                  />
+                );
               })
-              : null}
+            : null}
         </div>
       </div>
     </SolutionLayout>

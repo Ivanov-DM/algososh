@@ -1,32 +1,32 @@
 interface IStack<T> {
-    push: (item: T) => void;
-    pop: () => void;
-    peak: () => T | null;
-    getSize: () => number;
-    elements: () => T[] | null
+  push: (item: T) => void;
+  pop: () => void;
+  peak: () => T | null;
+  getSize: () => number;
+  elements: () => T[] | null;
 }
 
-export class Stack<T> implements IStack<T>{
-    private container: T[] = [];
+export class Stack<T> implements IStack<T> {
+  private container: T[] = [];
 
-    push = (item: T): void => {
-        this.container.push(item);
-    };
+  push = (item: T): void => {
+    this.container.push(item);
+  };
 
-    pop = (): void => {
-        if (this.container.length !== 0) {
-            this.container.pop();
-        }
-    };
+  pop = (): void => {
+    if (this.container.length !== 0) {
+      this.container.pop();
+    }
+  };
 
-    peak = (): T | null => {
-        if (this.container.length !== 0) {
-            return this.container[this.container.length - 1];
-        }
-        return null;
-    };
+  peak = (): T | null => {
+    if (this.container.length !== 0) {
+      return this.container[this.container.length - 1];
+    }
+    return null;
+  };
 
-    getSize = () => this.container.length;
+  getSize = () => this.container.length;
 
-    elements = () => this.container;
+  elements = () => this.container;
 }

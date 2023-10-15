@@ -1,41 +1,47 @@
-import React, {useState} from "react";
-import {SolutionLayout} from "../ui/solution-layout/solution-layout";
+import React, { useState } from "react";
+import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./sorting.module.css";
-import {RadioInput} from "../ui/radio-input/radio-input";
-import {Button} from "../ui/button/button";
-import {Direction} from "../../types/direction";
-import {randomArr} from "../../utils/utils";
-import {Column} from "../ui/column/column";
-import {SortingType} from "../../types/sorting-type";
-import {swap} from "../string/utils";
-import {delay} from "../string/string";
-import {ElementStates} from "../../types/element-states";
+import { RadioInput } from "../ui/radio-input/radio-input";
+import { Button } from "../ui/button/button";
+import { Direction } from "../../types/direction";
+import { randomArr } from "../../utils/utils";
+import { Column } from "../ui/column/column";
+import { SortingType } from "../../types/sorting-type";
+import { swap } from "../string/utils";
+import { delay } from "../string/string";
+import { ElementStates } from "../../types/element-states";
 
 type TSortingElement = {
   index: number;
   state: ElementStates;
-}
+};
 
 export const SortingPage: React.FC = () => {
-  const [sortingType, setSortingType] = useState<SortingType | string>(SortingType.Selection);
+  const [sortingType, setSortingType] = useState<SortingType | string>(
+    SortingType.Selection
+  );
   const [arr, setArr] = useState<Array<TSortingElement>>([]);
   const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [btnLoader, setBtnLoader] = useState<Direction | string>();
 
   const getNewArr = () => {
     const initArr = randomArr(0, 100, 3, 17);
-    setArr(initArr.map(el => {return {index: el, state: ElementStates.Default}}));
-  }
+    setArr(
+      initArr.map((el) => {
+        return { index: el, state: ElementStates.Default };
+      })
+    );
+  };
 
   const handleChangeRadioBtn = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSortingType(event.target.value);
-  }
+  };
 
   const selectionSort = async (direction: Direction) => {
     setBtnDisabled(true);
     setBtnLoader(direction);
     const modifiedArr = arr.slice();
-    const {length} = modifiedArr;
+    const { length } = modifiedArr;
     const lastEl = length - 1;
     for (let i = 0; i < length - 1; i++) {
       let maxInd = i;
@@ -74,15 +80,15 @@ export const SortingPage: React.FC = () => {
     modifiedArr[length - 1].state = ElementStates.Modified;
     await updateSortingArr(modifiedArr);
     setBtnDisabled(false);
-    setBtnLoader('');
-  }
+    setBtnLoader("");
+  };
 
   const bubbleSort = async (direction: Direction) => {
     setBtnDisabled(true);
     setBtnLoader(direction);
     const modifiedArr = arr.slice();
     let isSorted: boolean;
-    const {length} = modifiedArr;
+    const { length } = modifiedArr;
     for (let i = 0; i < length; i++) {
       isSorted = true;
       for (let j = 0; j < length - i - 1; j++) {
@@ -117,7 +123,7 @@ export const SortingPage: React.FC = () => {
             }
             await updateSortingArr(modifiedArr);
             setBtnDisabled(false);
-            setBtnLoader('');
+            setBtnLoader("");
             return;
           } else {
             modifiedArr[j + 1].state = ElementStates.Modified;
@@ -128,29 +134,29 @@ export const SortingPage: React.FC = () => {
       }
     }
     setBtnDisabled(false);
-    setBtnLoader('');
+    setBtnLoader("");
   };
 
   const handleAscSort = () => {
     if (sortingType === SortingType.Bubble) {
       bubbleSort(Direction.Ascending);
     } else {
-      selectionSort(Direction.Ascending)
+      selectionSort(Direction.Ascending);
     }
-  }
+  };
 
   const handleDescSort = () => {
     if (sortingType === SortingType.Bubble) {
       bubbleSort(Direction.Descending);
     } else {
-      selectionSort(Direction.Descending)
+      selectionSort(Direction.Descending);
     }
-  }
+  };
 
   const updateSortingArr = async (modifiedArr: Array<TSortingElement>) => {
     await delay(500);
     setArr([...modifiedArr]);
-  }
+  };
 
   return (
     <SolutionLayout title="Сортировка массива">
@@ -158,55 +164,49 @@ export const SortingPage: React.FC = () => {
         <div className={styles.input}>
           <div className={styles.radioBtn}>
             <RadioInput
-                label={"Выбор"}
-                checked={sortingType === SortingType.Selection}
-                onChange={handleChangeRadioBtn}
-                value={SortingType.Selection}
-                disabled={btnDisabled}
+              label={"Выбор"}
+              checked={sortingType === SortingType.Selection}
+              onChange={handleChangeRadioBtn}
+              value={SortingType.Selection}
+              disabled={btnDisabled}
             />
             <RadioInput
-                label={"Пузырёк"}
-                checked={sortingType === SortingType.Bubble}
-                onChange={handleChangeRadioBtn}
-                value={SortingType.Bubble}
-                disabled={btnDisabled}
+              label={"Пузырёк"}
+              checked={sortingType === SortingType.Bubble}
+              onChange={handleChangeRadioBtn}
+              value={SortingType.Bubble}
+              disabled={btnDisabled}
             />
           </div>
           <div className={styles.btnContainer}>
             <div className={styles.sortingBtns}>
               <Button
-                  sorting={Direction.Ascending}
-                  text={"По возрастанию"}
-                  onClick={handleAscSort}
-                  disabled={btnDisabled}
-                  isLoader={btnLoader === Direction.Ascending}
-                  extraClass={styles.sortingBtn}
+                sorting={Direction.Ascending}
+                text={"По возрастанию"}
+                onClick={handleAscSort}
+                disabled={btnDisabled}
+                isLoader={btnLoader === Direction.Ascending}
+                extraClass={styles.sortingBtn}
               />
               <Button
-                  sorting={Direction.Descending}
-                  text={"По убыванию"}
-                  onClick={handleDescSort}
-                  disabled={btnDisabled}
-                  isLoader={btnLoader === Direction.Descending}
-                  extraClass={styles.sortingBtn}
+                sorting={Direction.Descending}
+                text={"По убыванию"}
+                onClick={handleDescSort}
+                disabled={btnDisabled}
+                isLoader={btnLoader === Direction.Descending}
+                extraClass={styles.sortingBtn}
               />
             </div>
             <Button
-                text={"Новый массив"}
-                onClick={getNewArr}
-                disabled={btnDisabled}
+              text={"Новый массив"}
+              onClick={getNewArr}
+              disabled={btnDisabled}
             />
           </div>
         </div>
-        <div className={styles.animation} >
+        <div className={styles.animation}>
           {arr.map((el, index) => {
-            return (
-                <Column
-                    index={el.index}
-                    state={el.state}
-                    key={index}
-                />
-            )
+            return <Column index={el.index} state={el.state} key={index} />;
           })}
         </div>
       </div>

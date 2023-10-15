@@ -1,22 +1,22 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    row-gap: 48px;
-    margin: auto;
+  display: flex;
+  flex-direction: column;
+  row-gap: 48px;
+  margin: auto;
 }
 
 .input {
-    display: flex;
-    width: 522px;
-    margin: auto;
-    column-gap: 12px;
+  display: flex;
+  width: 522px;
+  margin: auto;
+  column-gap: 12px;
 }
 
 .animation {
-    display: flex;
-    flex-wrap: wrap;
-    max-width: 944px;
-    margin: auto;
-    column-gap: 16px;
-    row-gap: 78px;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 944px;
+  margin: auto;
+  column-gap: 16px;
+  row-gap: 78px;
 }
