@@ -1,12 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, {useEffect, useState} from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./string.module.css";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
-
-export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+import { useForm } from "../../hooks/useForm";
+import { delay } from "../../utils/utils";
 
 type TStringElement = {
   state: ElementStates;
@@ -14,10 +14,19 @@ type TStringElement = {
 };
 
 export const StringComponent: React.FC = () => {
-  const [inputValue, setInputValue] = useState<string>("");
+  const {values, handleChange, setValues} = useForm({stringInput: ''});
   const [letters, setLetters] = useState<Array<TStringElement>>([]);
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [btnLoader, setBtnLoader] = useState(false);
+
+  useEffect(() => {
+    /^[a-zA-Z\u0400-\u04FF]+$/.test(values.stringInput)
+        ? setIsDisabled(false)
+        : setIsDisabled(true);
+  },[values.stringInput]);
 
   const reverseString = async (str: string) => {
+    setBtnLoader(true);
     const chars: string[] = str.split("");
     const initLetters: Array<TStringElement> = Array.from(
       chars.map((char) => {
@@ -45,6 +54,8 @@ export const StringComponent: React.FC = () => {
       initLetters[start].state = ElementStates.Modified;
       await updateLetters(initLetters);
     }
+    setBtnLoader(false);
+    setValues({stringInput: ''});
   };
 
   const updateLetters = async (modifiedLetters: Array<TStringElement>) => {
@@ -53,29 +64,40 @@ export const StringComponent: React.FC = () => {
   };
 
   const onClickHandler = () => {
-    reverseString(inputValue);
-  };
-
-  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
+    const str = values.stringInput.trim();
+    if (str) {
+      reverseString(str);
+    }
   };
 
   return (
     <SolutionLayout title="Строка">
       <div className={styles.container}>
-        <div className={styles.input}>
+        <form className={styles.input}>
           <Input
             maxLength={11}
             isLimitText={true}
-            type={"text"}
-            onChange={onChangeHandler}
+            type="text"
+            onChange={handleChange}
+            name="stringInput"
+            value={values.stringInput}
           />
-          <Button text="Развернуть" onClick={onClickHandler} />
-        </div>
+          <Button
+              text="Развернуть"
+              type="submit"
+              disabled={isDisabled}
+              isLoader={btnLoader}
+              onClick={onClickHandler}
+          />
+        </form>
         <div className={styles.animation}>
           {letters.map((letter, index) => {
             return (
-              <Circle letter={letter.letter} state={letter.state} key={index} />
+              <Circle
+                  letter={letter.letter}
+                  state={letter.state}
+                  key={index}
+              />
             );
           })}
         </div>

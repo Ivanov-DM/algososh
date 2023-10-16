@@ -1,10 +1,10 @@
 import { ElementStates } from "../../types/element-states";
 import { TListElement } from "./list-page";
 
-export const getListElements = (array: number[]): Array<TListElement> => {
+export const getListElements = (array: string[]): Array<TListElement> => {
   return array.map((el, index, arr) => {
     return {
-      letter: "" + el,
+      letter: el,
       index: index,
       head: index === 0 ? "head" : "",
       tail: index === arr.length - 1 ? "tail" : "",
@@ -13,9 +13,9 @@ export const getListElements = (array: number[]): Array<TListElement> => {
   });
 };
 
-export const getFirstElement = (value: number) => {
+export const getFirstElement = (value: string) => {
   return {
-    letter: "" + value,
+    letter: value,
     index: 0,
     head: "head",
     tail: "tail",

@@ -6,8 +6,9 @@ import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { Queue } from "./Queue";
-import { delay } from "../string/string";
+import { delay } from "../../utils/utils";
 import { getEmptyQueueElements } from "./utils";
+import {useForm} from "../../hooks/useForm";
 
 type TQueueElement = {
   letter: string;
@@ -20,8 +21,7 @@ type TQueueElement = {
 type TClickedButton = "addBtn" | "deleteBtn" | "resetBtn";
 
 export const QueuePage: React.FC = () => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const [btnDisabled, setBtnDisabled] = useState<boolean>(true);
+  const {values, handleChange, setValues} = useForm({queueValue: ''});
   const [clickedBtn, setClickedBtn] = useState<TClickedButton | string>();
   const [queueElements, setQueueElements] = useState<Array<TQueueElement>>([]);
   const queue = useRef(new Queue<string>(7));
@@ -36,18 +36,10 @@ export const QueuePage: React.FC = () => {
     setQueueElements([...modifiedStack]);
   };
 
-  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
-
-  useEffect(() => {
-    inputValue ? setBtnDisabled(false) : setBtnDisabled(true);
-  }, [inputValue]);
-
   const addElementHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     setClickedBtn((event.currentTarget as HTMLButtonElement).value);
-    queue.current.enqueue(inputValue);
+    queue.current.enqueue(values.queueValue);
     const modifiedQueue = queueElements.slice();
     queue.current.elements().forEach((el, idx) => {
       if (el) {
@@ -70,7 +62,7 @@ export const QueuePage: React.FC = () => {
     await updateQueue(modifiedQueue);
     modifiedQueue[queue.current.getTail()].state = ElementStates.Default;
     await updateQueue(modifiedQueue);
-    setInputValue("");
+    setValues({queueValue: ''});
     setClickedBtn("");
   };
 
@@ -144,9 +136,10 @@ export const QueuePage: React.FC = () => {
           <Input
             maxLength={4}
             isLimitText={true}
-            type={"text"}
-            onChange={onChangeHandler}
-            value={inputValue}
+            type="text"
+            name="queueValue"
+            value={values.queueValue}
+            onChange={handleChange}
           />
           <div className={styles.btnContainer}>
             <Button
@@ -154,7 +147,7 @@ export const QueuePage: React.FC = () => {
               type="submit"
               onClick={addElementHandler}
               extraClass={styles.addBtn}
-              disabled={btnDisabled || queue.current.getTail() === 6}
+              disabled={!values.queueValue.trim() || queue.current.getTail() === 6}
               isLoader={clickedBtn === "addBtn"}
               value="addBtn"
             />

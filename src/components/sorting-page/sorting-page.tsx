@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./sorting.module.css";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import { Button } from "../ui/button/button";
 import { Direction } from "../../types/direction";
-import { randomArr } from "../../utils/utils";
 import { Column } from "../ui/column/column";
 import { SortingType } from "../../types/sorting-type";
 import { swap } from "../string/utils";
-import { delay } from "../string/string";
+import { delay } from "../../utils/utils";
 import { ElementStates } from "../../types/element-states";
+import {getRandomArrElements} from "./utils";
 
-type TSortingElement = {
+export type TSortingElement = {
   index: number;
   state: ElementStates;
 };
@@ -24,14 +24,9 @@ export const SortingPage: React.FC = () => {
   const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [btnLoader, setBtnLoader] = useState<Direction | string>();
 
-  const getNewArr = () => {
-    const initArr = randomArr(0, 100, 3, 17);
-    setArr(
-      initArr.map((el) => {
-        return { index: el, state: ElementStates.Default };
-      })
-    );
-  };
+  useEffect(() => {
+    setArr(getRandomArrElements());
+  }, [])
 
   const handleChangeRadioBtn = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSortingType(event.target.value);
@@ -199,7 +194,7 @@ export const SortingPage: React.FC = () => {
             </div>
             <Button
               text={"Новый массив"}
-              onClick={getNewArr}
+              onClick={() => {setArr(getRandomArrElements())}}
               disabled={btnDisabled}
             />
           </div>

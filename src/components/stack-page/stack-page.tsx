@@ -5,8 +5,9 @@ import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { Stack } from "./Stack";
-import { delay } from "../string/string";
+import { delay } from "../../utils/utils";
 import { ElementStates } from "../../types/element-states";
+import { useForm } from "../../hooks/useForm";
 
 type TStackElement = {
   letter: string;
@@ -15,24 +16,13 @@ type TStackElement = {
   state: ElementStates;
 };
 
+type TClickedButton = "addBtn" | "deleteBtn" | "resetBtn";
+
 export const StackPage: React.FC = () => {
-  const [inputValue, setInputValue] = useState<string>("");
-  const [btnDisabled, setBtnDisabled] = useState<boolean>(true);
-  const [isEmpty, setIsEmpty] = useState(true);
+  const {values, handleChange, setValues} = useForm({stackValue: ''});
+  const [clickedBtn, setClickedBtn] = useState<TClickedButton | string>();
   const [stackElements, setStackElements] = useState<Array<TStackElement>>([]);
   const stack = useRef(new Stack<TStackElement>());
-
-  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
-
-  useEffect(() => {
-    inputValue ? setBtnDisabled(false) : setBtnDisabled(true);
-  }, [inputValue]);
-
-  useEffect(() => {
-    stack.current.getSize() !== 0 ? setIsEmpty(false) : setIsEmpty(true);
-  }, [stack.current.getSize()]);
 
   const updateStack = async (modifiedStack: Array<TStackElement>) => {
     await delay(500);
@@ -41,9 +31,9 @@ export const StackPage: React.FC = () => {
 
   const addHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    setInputValue("");
+    setClickedBtn((event.currentTarget as HTMLButtonElement).value);
     let stackEl = {
-      letter: inputValue,
+      letter: values.stackValue,
       index: stack.current.getSize() === 0 ? 0 : stack.current.getSize(),
       head: "top",
       state: ElementStates.Changing,
@@ -54,11 +44,14 @@ export const StackPage: React.FC = () => {
     stack.current.push(stackEl);
     await updateStack(stack.current.elements());
     stack.current.peak()!.state = ElementStates.Default;
+    setValues({stackValue: ''})
     await updateStack(stack.current.elements());
+    setClickedBtn("");
   };
 
   const deleteHandler = async (event: React.FormEvent) => {
     event.preventDefault();
+    setClickedBtn((event.currentTarget as HTMLButtonElement).value);
     stack.current.peak()!.state = ElementStates.Changing;
     await updateStack(stack.current.elements());
 
@@ -67,12 +60,15 @@ export const StackPage: React.FC = () => {
       stack.current.peak()!.head = "top";
     }
     await updateStack(stack.current.elements());
+    setClickedBtn("");
   };
 
-  const clearHandler = (event: React.FormEvent) => {
+  const clearHandler = async (event: React.FormEvent) => {
     event.preventDefault();
+    setClickedBtn((event.currentTarget as HTMLButtonElement).value);
     stack.current = new Stack<TStackElement>();
-    setStackElements(stack.current.elements());
+    await updateStack(stack.current.elements());
+    setClickedBtn("");
   };
 
   return (
@@ -82,9 +78,10 @@ export const StackPage: React.FC = () => {
           <Input
             maxLength={4}
             isLimitText={true}
-            type={"text"}
-            onChange={onChangeHandler}
-            value={inputValue}
+            type="text"
+            name="stackValue"
+            value={values.stackValue}
+            onChange={handleChange}
           />
           <div className={styles.btnContainer}>
             <Button
@@ -92,19 +89,25 @@ export const StackPage: React.FC = () => {
               type="submit"
               onClick={addHandler}
               extraClass={styles.addBtn}
-              disabled={btnDisabled}
+              disabled={!values.stackValue.trim() || clickedBtn !== ""}
+              isLoader={clickedBtn === "addBtn"}
+              value="addBtn"
             />
             <Button
               text="Удалить"
               onClick={deleteHandler}
               extraClass={styles.deleteBtn}
-              disabled={isEmpty}
+              disabled={stack.current.getSize() === 0 || clickedBtn !== ""}
+              isLoader={clickedBtn === "deleteBtn"}
+              value="deleteBtn"
             />
             <Button
               text="Очистить"
               type="reset"
               onClick={clearHandler}
-              disabled={isEmpty}
+              disabled={stack.current.getSize() === 0 || clickedBtn !== ""}
+              isLoader={clickedBtn === "resetBtn"}
+              value="resetBtn"
             />
           </div>
         </form>

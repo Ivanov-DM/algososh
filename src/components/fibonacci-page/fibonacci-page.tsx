@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./fibonacci.module.css";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
-import { delay } from "../string/string";
+import { delay } from "../../utils/utils";
 import { fib } from "./utils";
+import { useForm } from "../../hooks/useForm";
 
 type TFibElement = {
   letter: string;
@@ -13,10 +14,17 @@ type TFibElement = {
 };
 
 export const FibonacciPage: React.FC = () => {
-  const [inputValue, setInputValue] = useState<number>();
-  const [btnDisabled, setBtnDisabled] = useState<boolean>(true);
+  const {values, handleChange, setValues} = useForm({fibValue: ''});
+  const [isDisabled, setIsDisabled] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const [fibSequence, setFibSequence] = useState<Array<TFibElement>>([]);
+
+  useEffect(() => {
+    const number = +values.fibValue;
+    !number || number < 1 || number > 19 || number % 1 !== 0
+        ? setIsDisabled(true)
+        : setIsDisabled(false);
+  }, [values.fibValue]);
 
   const updateFibSequence = async (modifiedFibSequence: Array<TFibElement>) => {
     await delay(500);
@@ -31,24 +39,13 @@ export const FibonacciPage: React.FC = () => {
       currentFibSequence.push({ letter: nums[i].toString(), index: i });
       await updateFibSequence(currentFibSequence);
     }
+    setValues({fibValue: ''});
     setBtnLoader(false);
   };
 
   const onClickHandler = (event: React.FormEvent) => {
     event.preventDefault();
-    if (inputValue) {
-      getFibSeqyence(inputValue);
-    }
-  };
-
-  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const current = +event.target.value;
-    if (current && current > 19) {
-      setBtnDisabled(true);
-    } else {
-      setBtnDisabled(false);
-      setInputValue(current);
-    }
+    getFibSeqyence(+values.fibValue);
   };
 
   return (
@@ -58,20 +55,28 @@ export const FibonacciPage: React.FC = () => {
           <Input
             max={19}
             isLimitText={true}
-            type={"number"}
-            onChange={onChangeHandler}
+            type="number"
+            onChange={handleChange}
+            name="fibValue"
+            value={values.fibValue}
           />
           <Button
             text="Рассчитать"
             type="submit"
-            disabled={btnDisabled || !inputValue}
+            disabled={isDisabled}
             isLoader={btnLoader}
             onClick={onClickHandler}
           />
         </form>
         <div className={styles.animation}>
           {fibSequence.map((el, index) => {
-            return <Circle index={el.index} letter={el.letter} key={index} />;
+            return (
+                <Circle
+                    index={el.index}
+                    letter={el.letter}
+                    key={index}
+                />
+            );
           })}
         </div>
       </div>
