@@ -89,7 +89,7 @@ export const StackPage: React.FC = () => {
               type="submit"
               onClick={addHandler}
               extraClass={styles.addBtn}
-              disabled={!values.stackValue.trim() || clickedBtn !== ""}
+              disabled={!values.stackValue.trim() || clickedBtn === "deleteBtn" || clickedBtn === "resetBtn"}
               isLoader={clickedBtn === "addBtn"}
               value="addBtn"
             />
