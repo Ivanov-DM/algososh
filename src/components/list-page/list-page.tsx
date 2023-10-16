@@ -34,10 +34,15 @@ type TClickedButton =
   | "deleteByIndexBtn";
 
 export const ListPage: React.FC = () => {
-  const {values, handleChange, setValues} = useForm({listValue: '', indexValue: ''});
+  const { values, handleChange, setValues } = useForm({
+    listValue: "",
+    indexValue: "",
+  });
   const [clickedBtn, setClickedBtn] = useState<TClickedButton | string>("");
   const [listElements, setListElements] = useState<Array<TListElement>>([]);
-  const listRef = useRef(new LinkedList(randomArr(0, 50, 4, 6, 'string') as string[]));
+  const listRef = useRef(
+    new LinkedList(randomArr(0, 50, 4, 6, "string") as string[])
+  );
   const [isDisabledIndexBtn, setIsDisabledIndexBtn] = useState(false);
 
   useEffect(() => {
@@ -45,11 +50,11 @@ export const ListPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    !values.indexValue
-    || +values.indexValue >= listRef.current.getSize()
-    || +values.indexValue < 0
-        ? setIsDisabledIndexBtn(true)
-        : setIsDisabledIndexBtn(false);
+    !values.indexValue ||
+    +values.indexValue >= listRef.current.getSize() ||
+    +values.indexValue < 0
+      ? setIsDisabledIndexBtn(true)
+      : setIsDisabledIndexBtn(false);
   }, [values.indexValue, values.listValue]);
 
   const updateList = async (modifiedStack: Array<TListElement>) => {
@@ -82,7 +87,7 @@ export const ListPage: React.FC = () => {
       await updateList(modifiedElements);
       modifiedElements[0].state = ElementStates.Default;
       await updateList(modifiedElements);
-      setValues({listValue: '', indexValue: ''});
+      setValues({ listValue: "", indexValue: "" });
       setClickedBtn("");
     }
   };
@@ -114,7 +119,7 @@ export const ListPage: React.FC = () => {
       modifiedElements[modifiedElements.length - 1].state =
         ElementStates.Default;
       await updateList(modifiedElements);
-      setValues({listValue: '', indexValue: ''});
+      setValues({ listValue: "", indexValue: "" });
       setClickedBtn("");
     }
   };
@@ -191,7 +196,7 @@ export const ListPage: React.FC = () => {
     modifiedElements[+values.indexValue].state = ElementStates.Default;
     await updateList(modifiedElements);
     setClickedBtn("");
-    setValues({listValue: '', indexValue: ''});
+    setValues({ listValue: "", indexValue: "" });
   };
 
   const deleteByIndexHandler = async (event: React.FormEvent) => {
@@ -220,7 +225,7 @@ export const ListPage: React.FC = () => {
     listRef.current.deleteByIndex(+values.indexValue);
     await updateList(getListElements(listRef.current.toArray()));
     setClickedBtn("");
-    setValues({listValue: '', indexValue: ''});
+    setValues({ listValue: "", indexValue: "" });
   };
 
   return (
@@ -287,7 +292,11 @@ export const ListPage: React.FC = () => {
               type="submit"
               linkedList={"big"}
               onClick={addByIndexHandler}
-              disabled={isDisabledIndexBtn || !values.listValue.trim() || clickedBtn !== ""}
+              disabled={
+                isDisabledIndexBtn ||
+                !values.listValue.trim() ||
+                clickedBtn !== ""
+              }
               isLoader={clickedBtn === "addByIndexBtn"}
               value="addByIndexBtn"
             />

@@ -19,7 +19,7 @@ type TStackElement = {
 type TClickedButton = "addBtn" | "deleteBtn" | "resetBtn";
 
 export const StackPage: React.FC = () => {
-  const {values, handleChange, setValues} = useForm({stackValue: ''});
+  const { values, handleChange, setValues } = useForm({ stackValue: "" });
   const [clickedBtn, setClickedBtn] = useState<TClickedButton | string>();
   const [stackElements, setStackElements] = useState<Array<TStackElement>>([]);
   const stack = useRef(new Stack<TStackElement>());
@@ -44,7 +44,7 @@ export const StackPage: React.FC = () => {
     stack.current.push(stackEl);
     await updateStack(stack.current.elements());
     stack.current.peak()!.state = ElementStates.Default;
-    setValues({stackValue: ''})
+    setValues({ stackValue: "" });
     await updateStack(stack.current.elements());
     setClickedBtn("");
   };

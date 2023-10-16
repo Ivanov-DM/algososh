@@ -8,7 +8,7 @@ import { ElementStates } from "../../types/element-states";
 import { Queue } from "./Queue";
 import { delay } from "../../utils/utils";
 import { getEmptyQueueElements } from "./utils";
-import {useForm} from "../../hooks/useForm";
+import { useForm } from "../../hooks/useForm";
 
 type TQueueElement = {
   letter: string;
@@ -21,7 +21,7 @@ type TQueueElement = {
 type TClickedButton = "addBtn" | "deleteBtn" | "resetBtn";
 
 export const QueuePage: React.FC = () => {
-  const {values, handleChange, setValues} = useForm({queueValue: ''});
+  const { values, handleChange, setValues } = useForm({ queueValue: "" });
   const [clickedBtn, setClickedBtn] = useState<TClickedButton | string>();
   const [queueElements, setQueueElements] = useState<Array<TQueueElement>>([]);
   const queue = useRef(new Queue<string>(7));
@@ -62,7 +62,7 @@ export const QueuePage: React.FC = () => {
     await updateQueue(modifiedQueue);
     modifiedQueue[queue.current.getTail()].state = ElementStates.Default;
     await updateQueue(modifiedQueue);
-    setValues({queueValue: ''});
+    setValues({ queueValue: "" });
     setClickedBtn("");
   };
 
@@ -147,7 +147,9 @@ export const QueuePage: React.FC = () => {
               type="submit"
               onClick={addElementHandler}
               extraClass={styles.addBtn}
-              disabled={!values.queueValue.trim() || queue.current.getTail() === 6}
+              disabled={
+                !values.queueValue.trim() || queue.current.getTail() === 6
+              }
               isLoader={clickedBtn === "addBtn"}
               value="addBtn"
             />

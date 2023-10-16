@@ -26,7 +26,6 @@ export class LinkedList<T> implements ILinkedList<T> {
 
   getHead = () => this.head!.value;
 
-
   append(element: T) {
     const node = new LinkedListNode(element);
     if (this.head === null) {

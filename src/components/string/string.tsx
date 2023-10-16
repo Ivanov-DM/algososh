@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./string.module.css";
 import { Input } from "../ui/input/input";
@@ -14,16 +14,16 @@ type TStringElement = {
 };
 
 export const StringComponent: React.FC = () => {
-  const {values, handleChange, setValues} = useForm({stringInput: ''});
+  const { values, handleChange, setValues } = useForm({ stringInput: "" });
   const [letters, setLetters] = useState<Array<TStringElement>>([]);
   const [isDisabled, setIsDisabled] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
 
   useEffect(() => {
     /^[a-zA-Z\u0400-\u04FF]+$/.test(values.stringInput)
-        ? setIsDisabled(false)
-        : setIsDisabled(true);
-  },[values.stringInput]);
+      ? setIsDisabled(false)
+      : setIsDisabled(true);
+  }, [values.stringInput]);
 
   const reverseString = async (str: string) => {
     setBtnLoader(true);
@@ -55,7 +55,7 @@ export const StringComponent: React.FC = () => {
       await updateLetters(initLetters);
     }
     setBtnLoader(false);
-    setValues({stringInput: ''});
+    setValues({ stringInput: "" });
   };
 
   const updateLetters = async (modifiedLetters: Array<TStringElement>) => {
@@ -83,21 +83,17 @@ export const StringComponent: React.FC = () => {
             value={values.stringInput}
           />
           <Button
-              text="Развернуть"
-              type="submit"
-              disabled={isDisabled}
-              isLoader={btnLoader}
-              onClick={onClickHandler}
+            text="Развернуть"
+            type="submit"
+            disabled={isDisabled}
+            isLoader={btnLoader}
+            onClick={onClickHandler}
           />
         </form>
         <div className={styles.animation}>
           {letters.map((letter, index) => {
             return (
-              <Circle
-                  letter={letter.letter}
-                  state={letter.state}
-                  key={index}
-              />
+              <Circle letter={letter.letter} state={letter.state} key={index} />
             );
           })}
         </div>

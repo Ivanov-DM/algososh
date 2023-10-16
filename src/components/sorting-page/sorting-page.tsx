@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./sorting.module.css";
 import { RadioInput } from "../ui/radio-input/radio-input";
@@ -9,7 +9,7 @@ import { SortingType } from "../../types/sorting-type";
 import { swap } from "../string/utils";
 import { delay } from "../../utils/utils";
 import { ElementStates } from "../../types/element-states";
-import {getRandomArrElements} from "./utils";
+import { getRandomArrElements } from "./utils";
 
 export type TSortingElement = {
   index: number;
@@ -26,7 +26,7 @@ export const SortingPage: React.FC = () => {
 
   useEffect(() => {
     setArr(getRandomArrElements());
-  }, [])
+  }, []);
 
   const handleChangeRadioBtn = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSortingType(event.target.value);
@@ -194,7 +194,9 @@ export const SortingPage: React.FC = () => {
             </div>
             <Button
               text={"Новый массив"}
-              onClick={() => {setArr(getRandomArrElements())}}
+              onClick={() => {
+                setArr(getRandomArrElements());
+              }}
               disabled={btnDisabled}
             />
           </div>
