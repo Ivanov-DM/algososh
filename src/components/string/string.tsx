@@ -20,7 +20,7 @@ export const StringComponent: React.FC = () => {
   const [btnLoader, setBtnLoader] = useState(false);
 
   useEffect(() => {
-    /^[a-zA-Z\u0400-\u04FF]+$/.test(values.stringInput)
+    /^[a-zA-Z\u0400-\u04FF0-9]+$/.test(values.stringInput)
       ? setIsDisabled(false)
       : setIsDisabled(true);
   }, [values.stringInput]);
