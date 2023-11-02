@@ -1,12 +1,4 @@
-export const swap = <T>(
-  arr: T[],
-  firstIndex: number,
-  secondIndex: number
-): void => {
-  const temp = arr[firstIndex];
-  arr[firstIndex] = arr[secondIndex];
-  arr[secondIndex] = temp;
-};
+import {swap} from "../../utils/utils";
 
 export const getReversingSteps = (str: string): string[][] => {
   const result: string[][] = [];

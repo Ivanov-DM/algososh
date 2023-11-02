@@ -1,4 +1,4 @@
-export const randomArr = (
+export const getRandomArray = (
   minVal: number,
   maxVal: number,
   minLen: number,
@@ -23,3 +23,13 @@ const getRandomNum = (
 };
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+export const swap = <T>(
+    arr: T[],
+    firstIndex: number,
+    secondIndex: number
+): void => {
+  const temp = arr[firstIndex];
+  arr[firstIndex] = arr[secondIndex];
+  arr[secondIndex] = temp;
+};

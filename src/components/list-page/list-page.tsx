@@ -5,7 +5,7 @@ import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { LinkedList } from "./LInkedList";
-import { randomArr } from "../../utils/utils";
+import { getRandomArray } from "../../utils/utils";
 import { ElementStates } from "../../types/element-states";
 import { delay } from "../../utils/utils";
 import { getFirstElement, getListElements } from "./utils";
@@ -41,7 +41,7 @@ export const ListPage: React.FC = () => {
   const [clickedBtn, setClickedBtn] = useState<TClickedButton | string>("");
   const [listElements, setListElements] = useState<Array<TListElement>>([]);
   const listRef = useRef(
-    new LinkedList(randomArr(0, 50, 4, 6, "string") as string[])
+    new LinkedList(getRandomArray(0, 50, 4, 6, "string") as string[])
   );
   const [isDisabledIndexBtn, setIsDisabledIndexBtn] = useState(false);
 
