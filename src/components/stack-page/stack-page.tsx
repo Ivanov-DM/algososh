@@ -42,10 +42,12 @@ export const StackPage: React.FC = () => {
       stack.current.peak()!.head = "";
     }
     stack.current.push(stackEl);
+    setStackElements(stack.current.elements());
     await updateStack(stack.current.elements());
     stack.current.peak()!.state = ElementStates.Default;
     setValues({ stackValue: "" });
-    await updateStack(stack.current.elements());
+    // await updateStack(stack.current.elements());
+    setStackElements(stack.current.elements())
     setClickedBtn("");
   };
 
@@ -59,7 +61,7 @@ export const StackPage: React.FC = () => {
     if (stack.current.getSize() !== 0) {
       stack.current.peak()!.head = "top";
     }
-    await updateStack(stack.current.elements());
+    setStackElements(stack.current.elements())
     setClickedBtn("");
   };
 
@@ -72,61 +74,61 @@ export const StackPage: React.FC = () => {
   };
 
   return (
-    <SolutionLayout title="Стек">
-      <div className={styles.container}>
-        <form className={styles.input}>
-          <Input
-            maxLength={4}
-            isLimitText={true}
-            type="text"
-            name="stackValue"
-            value={values.stackValue}
-            onChange={handleChange}
-          />
-          <div className={styles.btnContainer}>
-            <Button
-              text="Добавить"
-              type="submit"
-              onClick={addHandler}
-              extraClass={styles.addBtn}
-              disabled={!values.stackValue.trim() || clickedBtn === "deleteBtn" || clickedBtn === "resetBtn"}
-              isLoader={clickedBtn === "addBtn"}
-              value="addBtn"
+      <SolutionLayout title="Стек">
+        <div className={styles.container}>
+          <form className={styles.input}>
+            <Input
+                maxLength={4}
+                isLimitText={true}
+                type="text"
+                name="stackValue"
+                value={values.stackValue}
+                onChange={handleChange}
             />
-            <Button
-              text="Удалить"
-              onClick={deleteHandler}
-              extraClass={styles.deleteBtn}
-              disabled={stack.current.getSize() === 0 || clickedBtn !== ""}
-              isLoader={clickedBtn === "deleteBtn"}
-              value="deleteBtn"
-            />
-            <Button
-              text="Очистить"
-              type="reset"
-              onClick={clearHandler}
-              disabled={stack.current.getSize() === 0 || clickedBtn !== ""}
-              isLoader={clickedBtn === "resetBtn"}
-              value="resetBtn"
-            />
+            <div className={styles.btnContainer}>
+              <Button
+                  text="Добавить"
+                  type="submit"
+                  onClick={addHandler}
+                  extraClass={styles.addBtn}
+                  disabled={!values.stackValue.trim() || clickedBtn === "deleteBtn" || clickedBtn === "resetBtn"}
+                  isLoader={clickedBtn === "addBtn"}
+                  value="addBtn"
+              />
+              <Button
+                  text="Удалить"
+                  onClick={deleteHandler}
+                  extraClass={styles.deleteBtn}
+                  disabled={stack.current.getSize() === 0 || clickedBtn !== ""}
+                  isLoader={clickedBtn === "deleteBtn"}
+                  value="deleteBtn"
+              />
+              <Button
+                  text="Очистить"
+                  type="reset"
+                  onClick={clearHandler}
+                  disabled={stack.current.getSize() === 0 || clickedBtn !== ""}
+                  isLoader={clickedBtn === "resetBtn"}
+                  value="resetBtn"
+              />
+            </div>
+          </form>
+          <div className={styles.animation}>
+            {stackElements.length !== 0
+                ? stackElements.map((el, index) => {
+                  return (
+                      <Circle
+                          letter={el.letter}
+                          index={el.index}
+                          head={el.head}
+                          state={el.state}
+                          key={index}
+                      />
+                  );
+                })
+                : null}
           </div>
-        </form>
-        <div className={styles.animation}>
-          {stackElements.length !== 0
-            ? stackElements.map((el, index) => {
-                return (
-                  <Circle
-                    letter={el.letter}
-                    index={el.index}
-                    head={el.head}
-                    state={el.state}
-                    key={index}
-                  />
-                );
-              })
-            : null}
         </div>
-      </div>
-    </SolutionLayout>
+      </SolutionLayout>
   );
 };
