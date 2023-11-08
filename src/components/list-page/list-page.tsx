@@ -72,7 +72,7 @@ export const ListPage: React.FC = () => {
     if (listRef.current.getSize() === 0) {
       modifiedElements.push(getFirstElement(values.listValue));
       listRef.current.prepend(values.listValue);
-      await updateList(modifiedElements);
+      setListElements(modifiedElements)
       setClickedBtn("");
     } else {
       modifiedElements[0].head = {
@@ -84,7 +84,7 @@ export const ListPage: React.FC = () => {
       listRef.current.prepend(values.listValue);
       modifiedElements = getListElements(listRef.current.toArray());
       modifiedElements[0].state = ElementStates.Modified;
-      await updateList(modifiedElements);
+      setListElements(modifiedElements)
       modifiedElements[0].state = ElementStates.Default;
       await updateList(modifiedElements);
       setValues({ listValue: "", indexValue: "" });
@@ -102,7 +102,7 @@ export const ListPage: React.FC = () => {
     if (listRef.current.getSize() === 0) {
       modifiedElements.push(getFirstElement(values.listValue));
       listRef.current.prepend(values.listValue);
-      await updateList(modifiedElements);
+      setListElements(modifiedElements)
       setClickedBtn("");
     } else {
       modifiedElements[modifiedElements.length - 1].tail = {
@@ -115,7 +115,7 @@ export const ListPage: React.FC = () => {
       modifiedElements = getListElements(listRef.current.toArray());
       modifiedElements[modifiedElements.length - 1].state =
         ElementStates.Modified;
-      await updateList(modifiedElements);
+      setListElements(modifiedElements);
       modifiedElements[modifiedElements.length - 1].state =
         ElementStates.Default;
       await updateList(modifiedElements);
@@ -136,7 +136,7 @@ export const ListPage: React.FC = () => {
     modifiedElements[0].letter = "";
     await updateList(modifiedElements);
     listRef.current.deleteHead();
-    await updateList(getListElements(listRef.current.toArray()));
+    setListElements(getListElements(listRef.current.toArray()))
     setClickedBtn("");
   };
 
@@ -152,7 +152,7 @@ export const ListPage: React.FC = () => {
     modifiedElements[modifiedElements.length - 1].letter = "";
     await updateList(modifiedElements);
     listRef.current.deleteTail();
-    await updateList(getListElements(listRef.current.toArray()));
+    setListElements(getListElements(listRef.current.toArray()))
     setClickedBtn("");
   };
 
