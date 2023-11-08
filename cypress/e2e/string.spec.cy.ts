@@ -5,12 +5,12 @@ describe('String', function () {
 
     it('If input field is empty, button should be disabled', () => {
         cy.get("input").should('be.empty');
-        cy.get("button").should('be.disabled');
+        cy.get("button[type='submit']").should('be.disabled');
     })
 
     it('If input field is not empty, button should be enabled', () => {
         cy.get("input").type('test');
-        cy.get("button").should('be.enabled');
+        cy.get("button[type='submit']").should('be.enabled');
     })
 
     it('Should be reversed correctly', () => {

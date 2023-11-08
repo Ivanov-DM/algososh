@@ -46,7 +46,6 @@ export const StackPage: React.FC = () => {
     await updateStack(stack.current.elements());
     stack.current.peak()!.state = ElementStates.Default;
     setValues({ stackValue: "" });
-    // await updateStack(stack.current.elements());
     setStackElements(stack.current.elements())
     setClickedBtn("");
   };
