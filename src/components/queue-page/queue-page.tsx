@@ -61,7 +61,7 @@ export const QueuePage: React.FC = () => {
     });
     await updateQueue(modifiedQueue);
     modifiedQueue[queue.current.getTail()].state = ElementStates.Default;
-    await updateQueue(modifiedQueue);
+    setQueueElements(modifiedQueue)
     setValues({ queueValue: "" });
     setClickedBtn("");
   };
@@ -115,7 +115,7 @@ export const QueuePage: React.FC = () => {
             });
       }
     });
-    await updateQueue(modifiedQueue);
+    setQueueElements(modifiedQueue)
     setClickedBtn("");
   };
 
@@ -155,7 +155,6 @@ export const QueuePage: React.FC = () => {
             />
             <Button
               text="Удалить"
-              type="submit"
               onClick={deleteElementHandler}
               extraClass={styles.deleteBtn}
               disabled={queue.current.isEmpty() || clickedBtn !== ""}

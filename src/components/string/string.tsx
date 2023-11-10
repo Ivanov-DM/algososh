@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import styles from "./string.module.css";
 import { Input } from "../ui/input/input";
@@ -7,6 +7,7 @@ import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { useForm } from "../../hooks/useForm";
 import { delay } from "../../utils/utils";
+import {getReversingSteps} from "./utils";
 
 type TStringElement = {
   state: ElementStates;
@@ -20,39 +21,41 @@ export const StringComponent: React.FC = () => {
   const [btnLoader, setBtnLoader] = useState(false);
 
   useEffect(() => {
-    /^[a-zA-Z\u0400-\u04FF0-9]+$/.test(values.stringInput)
-      ? setIsDisabled(false)
-      : setIsDisabled(true);
+    /\s+/.test(values.stringInput) || values.stringInput === ''
+      ? setIsDisabled(true)
+      : setIsDisabled(false);
   }, [values.stringInput]);
 
   const reverseString = async (str: string) => {
     setBtnLoader(true);
-    const chars: string[] = str.split("");
-    const initLetters: Array<TStringElement> = Array.from(
-      chars.map((char) => {
-        return { letter: char, state: ElementStates.Default };
-      })
+    const steps = getReversingSteps(str);
+    const modifiedLetters = Array.from(
+        steps[0].map((char) => {
+          return {letter: char, state: ElementStates.Default};
+        })
     );
-    await updateLetters(initLetters);
-    let start: number = 0;
-    let end: number = chars.length - 1;
-
-    while (start < end) {
-      initLetters[start].state = ElementStates.Changing;
-      initLetters[end].state = ElementStates.Changing;
-      await updateLetters(initLetters);
-      initLetters[start].state = ElementStates.Modified;
-      initLetters[end].state = ElementStates.Modified;
-      const temp = initLetters[start].letter;
-      initLetters[start].letter = initLetters[end].letter;
-      initLetters[end].letter = temp;
-      await updateLetters(initLetters);
-      start++;
-      end--;
-    }
-    if (start === end) {
-      initLetters[start].state = ElementStates.Modified;
-      await updateLetters(initLetters);
+    const {length} = modifiedLetters;
+    for (let i = 0; i < steps.length; i++) {
+      if (steps.length === 1) {
+        modifiedLetters[i].state = ElementStates.Modified;
+        await updateLetters(modifiedLetters);
+      } else {
+        if (modifiedLetters[i - 1]) {
+          modifiedLetters[i - 1].letter = steps[i][i - 1];
+          modifiedLetters[i - 1].state = ElementStates.Modified;
+        }
+        if (modifiedLetters[length - i]) {
+          modifiedLetters[length - i].letter = steps[i][length - i];
+          modifiedLetters[length - i].state = ElementStates.Modified;
+        }
+        if (i === steps.length - 1) {
+          modifiedLetters[i].state = ElementStates.Modified;
+        } else {
+          modifiedLetters[i].state = ElementStates.Changing;
+          modifiedLetters[length - i - 1].state = ElementStates.Changing;
+        }
+        await updateLetters(modifiedLetters);
+      }
     }
     setBtnLoader(false);
     setValues({ stringInput: "" });
@@ -73,7 +76,7 @@ export const StringComponent: React.FC = () => {
   return (
     <SolutionLayout title="Строка">
       <div className={styles.container}>
-        <form className={styles.input}>
+        <form data-testid='test-form' className={styles.input}>
           <Input
             maxLength={11}
             isLimitText={true}
@@ -93,7 +96,7 @@ export const StringComponent: React.FC = () => {
         <div className={styles.animation}>
           {letters.map((letter, index) => {
             return (
-              <Circle letter={letter.letter} state={letter.state} key={index} />
+              <Circle data-testid='circle-item' letter={letter.letter} state={letter.state} key={index} />
             );
           })}
         </div>
