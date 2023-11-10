@@ -1,236 +1,251 @@
+import { DELAY_IN_MS } from "../../src/constants/delays";
+
 describe('List', () => {
+    const CIRCLE_ITEM_SELECTOR = '[class*=circle_circle]';
+    const CIRCLE_TAIL_SELECTOR = '[class*=circle_tail]';
+    const CIRCLE_HEAD_SELECTOR = '[class*=circle_head]';
+    const CIRCLE_CONTENT_SELECTOR = '[class*=circle_content]';
+
     beforeEach(() => {
         cy.visit('/list');
+        cy.get("button[value='addByHeadBtn']").as('addByHeadButton');
+        cy.get("button[value='addByTailBtn']").as('addByTailButton');
+        cy.get("button[value='addByIndexBtn']").as('addByIndexButton');
+        cy.get("button[value='deleteByIndexBtn']").as('deleteByIndexButton');
+        cy.get("button[value='deleteByHeadBtn']").as('deleteByHeadButton');
+        cy.get("button[value='deleteByTailBtn']").as('deleteByTailButton');
+        cy.get("input[name='listValue']").as('listValue');
+        cy.get("input[name='indexValue']").as('indexValue');
+        cy.get("div[class*='list_animation']").as('itemContainer');
     });
 
     it('If input field of value is empty, add buttons should be disabled', () => {
-        cy.get("input[name='listValue']").should('be.empty');
-        cy.get("button[value='addByHeadBtn']").should('be.disabled');
-        cy.get("button[value='addByTailBtn']").should('be.disabled');
-        cy.get("button[value='addByIndexBtn']").should('be.disabled');
+        cy.get("@listValue").should('be.empty');
+        cy.get("@addByHeadButton").should('be.disabled');
+        cy.get("@addByTailButton").should('be.disabled');
+        cy.get("@addByIndexButton").should('be.disabled');
     });
 
     it('If input field of value is not empty, add buttons should be enabled', () => {
-        cy.get("input[name='listValue']").type('test');
-        cy.get("button[value='addByHeadBtn']").should('be.enabled');
-        cy.get("button[value='addByTailBtn']").should('be.enabled');
-        cy.get("button[value='addByIndexBtn']").should('be.disabled');
+        cy.get("@listValue").type('test');
+        cy.get("@addByHeadButton").should('be.enabled');
+        cy.get("@addByTailButton").should('be.enabled');
+        cy.get("@addByIndexButton").should('be.disabled');
     });
 
     it('If input field of index is empty, add and delete buttons by index should be disabled', () => {
-        cy.get("input[name='indexValue']").should('be.empty');
-        cy.get("button[value='addByIndexBtn']").should('be.disabled');
-        cy.get("button[value='deleteByIndexBtn']").should('be.disabled');
+        cy.get("@indexValue").should('be.empty');
+        cy.get("@addByIndexButton").should('be.disabled');
+        cy.get("@deleteByIndexButton").should('be.disabled');
     });
 
     it('If input field of index is not empty, delete buttons by index should be enabled', () => {
-        cy.get("input[name='indexValue']").type('2');
-        cy.get("button[value='addByIndexBtn']").should('be.disabled');
-        cy.get("button[value='deleteByIndexBtn']").should('be.enabled');
+        cy.get("@indexValue").type('2');
+        cy.get("@addByIndexButton").should('be.disabled');
+        cy.get("@deleteByIndexButton").should('be.enabled');
     });
 
     it('If input fields are not empty, add and delete buttons should be enabled', () => {
-        cy.get("input[name='listValue']").type('test');
-        cy.get("input[name='indexValue']").type('2');
-        cy.get("button[value='addByHeadBtn']").should('be.enabled');
-        cy.get("button[value='addByTailBtn']").should('be.enabled');
-        cy.get("button[value='addByIndexBtn']").should('be.enabled');
-        cy.get("button[value='deleteByIndexBtn']").should('be.enabled');
+        cy.get("@listValue").type('test');
+        cy.get("@indexValue").type('2');
+        cy.get("@addByHeadButton").should('be.enabled');
+        cy.get("@addByTailButton").should('be.enabled');
+        cy.get("@addByIndexButton").should('be.enabled');
+        cy.get("@deleteByIndexButton").should('be.enabled');
     });
 
     it('Default list should be rendered correctly', () => {
-        cy.get("div[class*='list_animation']").children().should($div => {
+        cy.get("@itemContainer").children().should($div => {
             expect($div).not.be.empty;
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq($div.length - 1).children('[class*=circle_tail]')).to.contain('tail');
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq($div.length - 1).children(CIRCLE_TAIL_SELECTOR)).to.contain('tail');
             for (let i = 0; i < $div.length; i++) {
-                expect($div.eq(i).children('[class*=circle_circle]')).not.be.empty;
-                expect($div.eq(i).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
+                expect($div.eq(i).children(CIRCLE_ITEM_SELECTOR)).not.be.empty;
+                expect($div.eq(i).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
             }
         });
     });
 
     it('Element should be correctly added into head of list', () => {
         cy.clock();
-        cy.get("input[name='listValue']").type('test');
-        cy.get("button[value='addByHeadBtn']").click();
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('test');
+        cy.get("@listValue").type('test');
+        cy.get("@addByHeadButton").click();
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('test');
             expect($div.eq(0)
-                .children('[class*=circle_head]')
-                .children('[class*=circle_content]')
-                .children('[class*=circle_circle]')
+                .children(CIRCLE_HEAD_SELECTOR)
+                .children(CIRCLE_CONTENT_SELECTOR)
+                .children(CIRCLE_ITEM_SELECTOR)
             ).to.have.attr('class').match(/circle_changing/);
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.contain('test');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_modified/);
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.contain('test');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_modified/);
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.contain('test');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.contain('test');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
         });
     });
 
     it('Element should be correctly added into tail of list', () => {
         cy.clock();
-        cy.get("input[name='listValue']").type('test');
-        cy.get("button[value='addByTailBtn']").click();
-        cy.get("div[class*='list_animation']").children().should($div => {
+        cy.get("@listValue").type('test');
+        cy.get("@addByTailButton").click();
+        cy.get("@itemContainer").children().should($div => {
             const tailIndex = $div.length - 1;
-            expect($div.eq(tailIndex).children('[class*=circle_tail]')).to.contain('test');
+            expect($div.eq(tailIndex).children(CIRCLE_TAIL_SELECTOR)).to.contain('test');
             expect($div.eq(tailIndex)
-                .children('[class*=circle_tail]')
-                .children('[class*=circle_content]')
-                .children('[class*=circle_circle]')
+                .children(CIRCLE_TAIL_SELECTOR)
+                .children(CIRCLE_CONTENT_SELECTOR)
+                .children(CIRCLE_ITEM_SELECTOR)
             ).to.have.attr('class').match(/circle_changing/);
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
             const tailIndex = $div.length - 1;
-            expect($div.eq(tailIndex).children('[class*=circle_tail]')).to.contain('tail');
-            expect($div.eq(tailIndex).children('[class*=circle_circle]')).to.contain('test');
-            expect($div.eq(tailIndex).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_modified/);
+            expect($div.eq(tailIndex).children(CIRCLE_TAIL_SELECTOR)).to.contain('tail');
+            expect($div.eq(tailIndex).children(CIRCLE_ITEM_SELECTOR)).to.contain('test');
+            expect($div.eq(tailIndex).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_modified/);
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
             const tailIndex = $div.length - 1;
-            expect($div.eq(tailIndex).children('[class*=circle_tail]')).to.contain('tail');
-            expect($div.eq(tailIndex).children('[class*=circle_circle]')).to.contain('test');
-            expect($div.eq(tailIndex).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
+            expect($div.eq(tailIndex).children(CIRCLE_TAIL_SELECTOR)).to.contain('tail');
+            expect($div.eq(tailIndex).children(CIRCLE_ITEM_SELECTOR)).to.contain('test');
+            expect($div.eq(tailIndex).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
         });
     });
 
     it('Element should be correctly added into list by index', () => {
         cy.clock();
-        cy.get("input[name='listValue']").type('test');
-        cy.get("input[name='indexValue']").type('2');
-        cy.get("button[value='addByIndexBtn']").click();
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('test');
+        cy.get("@listValue").type('test');
+        cy.get("@indexValue").type('2');
+        cy.get("@addByIndexButton").click();
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('test');
             expect($div.eq(0)
-                .children('[class*=circle_head]')
-                .children('[class*=circle_content]')
-                .children('[class*=circle_circle]')
+                .children(CIRCLE_HEAD_SELECTOR)
+                .children(CIRCLE_CONTENT_SELECTOR)
+                .children(CIRCLE_ITEM_SELECTOR)
             ).to.have.attr('class').match(/circle_changing/);
         });
-        cy.tick(1000);
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_changing/);
-            expect($div.eq(1).children('[class*=circle_head]')).to.contain('test');
+        cy.tick(DELAY_IN_MS);
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_changing/);
+            expect($div.eq(1).children(CIRCLE_HEAD_SELECTOR)).to.contain('test');
             expect($div.eq(1)
-                .children('[class*=circle_head]')
-                .children('[class*=circle_content]')
-                .children('[class*=circle_circle]')
+                .children(CIRCLE_HEAD_SELECTOR)
+                .children(CIRCLE_CONTENT_SELECTOR)
+                .children(CIRCLE_ITEM_SELECTOR)
             ).to.have.attr('class').match(/circle_changing/);
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_changing/);
-            expect($div.eq(1).children('[class*=circle_head]')).to.contain('');
-            expect($div.eq(1).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_changing/);
-            expect($div.eq(2).children('[class*=circle_head]')).to.contain('test');
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_changing/);
+            expect($div.eq(1).children(CIRCLE_HEAD_SELECTOR)).to.contain('');
+            expect($div.eq(1).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_changing/);
+            expect($div.eq(2).children(CIRCLE_HEAD_SELECTOR)).to.contain('test');
             expect($div.eq(2)
-                .children('[class*=circle_head]')
-                .children('[class*=circle_content]')
-                .children('[class*=circle_circle]')
+                .children(CIRCLE_HEAD_SELECTOR)
+                .children(CIRCLE_CONTENT_SELECTOR)
+                .children(CIRCLE_ITEM_SELECTOR)
             ).to.have.attr('class').match(/circle_changing/);
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
-            // expect($div.length).to.eq(elCount + 1);
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
-            expect($div.eq(1).children('[class*=circle_head]')).to.contain('');
-            expect($div.eq(1).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
-            expect($div.eq(2).children('[class*=circle_circle]')).to.contain('test');
-            expect($div.eq(2).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_modified/);
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
+            expect($div.eq(1).children(CIRCLE_HEAD_SELECTOR)).to.contain('');
+            expect($div.eq(1).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
+            expect($div.eq(2).children(CIRCLE_ITEM_SELECTOR)).to.contain('test');
+            expect($div.eq(2).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_modified/);
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
-            expect($div.eq(1).children('[class*=circle_head]')).to.contain('');
-            expect($div.eq(1).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
-            expect($div.eq(2).children('[class*=circle_circle]')).to.contain('test');
-            expect($div.eq(2).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
+            expect($div.eq(1).children(CIRCLE_HEAD_SELECTOR)).to.contain('');
+            expect($div.eq(1).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
+            expect($div.eq(2).children(CIRCLE_ITEM_SELECTOR)).to.contain('test');
+            expect($div.eq(2).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
         });
     });
 
     it('Element should be correctly removed from head of the list', () => {
         cy.clock();
-        cy.get("button[value='deleteByHeadBtn']").should('be.enabled').click();
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).not.be.empty;
+        cy.get("@deleteByHeadButton").should('be.enabled').click();
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).not.be.empty;
             expect($div.eq(0)
-                .children('[class*=circle_head]')
-                .children('[class*=circle_content]')
-                .children('[class*=circle_circle]')
+                .children(CIRCLE_HEAD_SELECTOR)
+                .children(CIRCLE_CONTENT_SELECTOR)
+                .children(CIRCLE_ITEM_SELECTOR)
             ).to.have.attr('class').match(/circle_changing/);
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).not.be.empty;
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).not.be.empty;
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
         });
     });
 
     it('Element should be correctly removed from tail of the list', () => {
         cy.clock();
-        cy.get("button[value='deleteByTailBtn']").should('be.enabled').click();
-        cy.get("div[class*='list_animation']").children().should($div => {
+        cy.get("@deleteByTailButton").should('be.enabled').click();
+        cy.get("@itemContainer").children().should($div => {
             const tailIndex = $div.length - 1;
-            expect($div.eq(tailIndex).children('[class*=circle_tail]')).not.be.empty;
+            expect($div.eq(tailIndex).children(CIRCLE_TAIL_SELECTOR)).not.be.empty;
             expect($div.eq(tailIndex)
-                .children('[class*=circle_tail]')
-                .children('[class*=circle_content]')
-                .children('[class*=circle_circle]')
+                .children(CIRCLE_TAIL_SELECTOR)
+                .children(CIRCLE_CONTENT_SELECTOR)
+                .children(CIRCLE_ITEM_SELECTOR)
             ).to.have.attr('class').match(/circle_changing/);
 
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
             const tailIndex = $div.length - 1;
-            expect($div.eq(tailIndex).children('[class*=circle_tail]')).to.contain('tail');
-            expect($div.eq(tailIndex).children('[class*=circle_circle]')).not.be.empty;
-            expect($div.eq(tailIndex).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
+            expect($div.eq(tailIndex).children(CIRCLE_TAIL_SELECTOR)).to.contain('tail');
+            expect($div.eq(tailIndex).children(CIRCLE_ITEM_SELECTOR)).not.be.empty;
+            expect($div.eq(tailIndex).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
         });
     });
 
     it('Element should be correctly removed from the list by index', () => {
         cy.clock();
-        cy.get("input[name='indexValue']").type('1');
-        cy.get("button[value='deleteByIndexBtn']").click();
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_changing/);
+        cy.get("@indexValue").type('1');
+        cy.get("@deleteByIndexButton").click();
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_changing/);
         });
-        cy.tick(1000);
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_changing/);
-            expect($div.eq(1).children('[class*=circle_tail]')).not.be.empty;
+        cy.tick(DELAY_IN_MS);
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_changing/);
+            expect($div.eq(1).children(CIRCLE_TAIL_SELECTOR)).not.be.empty;
             expect($div.eq(1)
-                .children('[class*=circle_tail]')
-                .children('[class*=circle_content]')
-                .children('[class*=circle_circle]')
+                .children(CIRCLE_TAIL_SELECTOR)
+                .children(CIRCLE_CONTENT_SELECTOR)
+                .children(CIRCLE_ITEM_SELECTOR)
             ).to.have.attr('class').match(/circle_changing/);
         });
-        cy.tick(1000);
-        cy.get("div[class*='list_animation']").children().should($div => {
-            expect($div.eq(0).children('[class*=circle_head]')).to.contain('head');
-            expect($div.eq(0).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
-            expect($div.eq(1).children('[class*=circle_tail]')).be.empty;
-            expect($div.eq(1).children('[class*=circle_circle]')).to.have.attr('class').match(/circle_default/);
+        cy.tick(DELAY_IN_MS);
+        cy.get("@itemContainer").children().should($div => {
+            expect($div.eq(0).children(CIRCLE_HEAD_SELECTOR)).to.contain('head');
+            expect($div.eq(0).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
+            expect($div.eq(1).children(CIRCLE_TAIL_SELECTOR)).be.empty;
+            expect($div.eq(1).children(CIRCLE_ITEM_SELECTOR)).to.have.attr('class').match(/circle_default/);
         });
     });
 });
